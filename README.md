@@ -1,83 +1,82 @@
-Shadowsocks for Windows
+<img src="Shadowsocks.WPF/Resources/ssw128.png" alt="[logo]" width="48"/> Shadowsocks for Windows
 =======================
 
-[![Build Status]][Appveyor]
+[![Build](https://github.com/shadowsocks/shadowsocks-windows/workflows/Build/badge.svg)](https://github.com/shadowsocks/shadowsocks-windows/actions?query=workflow%3ABuild)
+[![Release](https://github.com/shadowsocks/shadowsocks-windows/workflows/Release/badge.svg)](https://github.com/shadowsocks/shadowsocks-windows/actions?query=workflow%3ARelease)
 
-[中文说明]
+## Features
 
-#### Features
+- Connect to Shadowsocks servers.
+- Automatically set system proxy.
+- SIP002 URL scheme.
+- SIP003 plugins.
+- SIP008 online configuration delivery.
 
-1. System proxy configuration
-2. PAC mode and global mode
-3. [GFWList] and user rules
-4. Supports HTTP proxy
-5. Supports server auto switching
-6. Supports UDP relay (see Usage)
+## Downloads
 
-#### Download
+Download from [releases](https://github.com/shadowsocks/shadowsocks-windows/releases).
 
-Download the [latest release].
+## Usage
 
-#### Basic
+- 🚀
 
-1. Find Shadowsocks icon in the notification tray
-2. You can add multiple servers in servers menu
-3. Select `Enable System Proxy` menu to enable system proxy. Please disable other
-proxy addons in your browser, or set them to use system proxy
-4. You can also configure your browser proxy manually if you don't want to enable
-system proxy. Set Socks5 or HTTP proxy to 127.0.0.1:1080. You can change this
-port in `Servers -> Edit Servers`
+## PAC
 
-#### PAC
+- The PAC rules are generated from the geosite database in [v2fly/domain-list-community](https://github.com/v2fly/domain-list-community).
+- Generation modes: whitelist mode and blacklist mode.
+- Domain groups: `geositeDirectGroups` and `geositeProxiedGroups`.
+    - `geositeDirectGroups` is initialized with `cn` and `geolocation-!cn@cn`.
+    - `geositeProxiedGroups` is initialized with `geolocation-!cn`.
+- To switch between different modes, modify the `geositePreferDirect` property in `gui-config.json`
+    - When `geositePreferDirect` is false (default), PAC works in whitelist mode. Exception rules are generated from `geositeDirectGroups`. Unmatched domains goes through the proxy.
+    - When `geositePreferDirect` is true, PAC works in blacklist mode. Blocking rules are generated from `geositeProxiedGroups`. Exception rules are generated from `geositeDirectGroups`. Unmatched domains are connected to directly.
+- Starting from 4.3.0.0, shadowsocks-windows defaults to whitelist mode with Chinese domains excluded from connecting via the proxy.
+- The new default values make sure that:
+    - When in whitelist mode, Chinese domains, including non-Chinese companies' Chinese CDNs, are connected to directly.
+    - When in blacklist mode, only non-Chinese domains goes through the proxy. Chinese domains, as well as non-Chinese companies' Chinese CDNs, are connected to directly.
 
-1. You can change PAC rules by editing the PAC file. When you save the PAC file
-with any editor, Shadowsocks will notify browsers about the change automatically
-2. You can also update PAC file from [GFWList] (maintained by 3rd party)
-3. You can also use online PAC URL
+### User-defined rules
 
-#### Server Auto Switching
+- To define your own PAC rules, it's recommended to use the `user-rule.txt` file.
+- You can also modify `pac.txt` directly. But your modifications won't persist after updating geosite from the upstream.
 
-1. Load balance: choosing server randomly
-2. High availability: choosing the best server (low latency and packet loss)
-3. Choose By Total Package Loss: ping and choose. Please also enable
-   `Availability Statistics` in the menu if you want to use this
-4. Write your own strategy by implement IStrategy interface and send us a pull request!
+## Development
 
-#### UDP
+- IDE: Visual Studio 2019
+- Language: C# 9.0
+- SDK: .NET 5
 
-For UDP, you need to use SocksCap or ProxyCap to force programs you want
-to be proxied to tunnel over Shadowsocks
+### Build
 
-#### Multiple Instances
+1. Clone the repository recursively.
+```bash
+$ git clone --recursive https://github.com/shadowsocks/shadowsocks-windows.git
+```
+2. Open the repository in VS2019, switch to the _Release_ configuration, and build the solution.
 
-If you want to manage multiple servers using other tools like SwitchyOmega,
-you can start multiple Shadowsocks instances. To avoid configuration conflicts,
-copy Shadowsocks to a new directory and choose a different local port.
+### Contribute
 
-Also, make sure to use `SOCKS5` proxy in SwitchyOmega, since we have only
-one HTTP proxy instance.
+`PR welcome`
 
-#### Server Configuration
+You can use the [Source Browser](https://ss-windows.cube64128.xyz/) to review code online.
 
-Please visit [Servers] for more information.
+## License
 
-#### Portable Mode
+Shadowsocks-windows is licensed under the [GPLv3](LICENSE.txt) license.
 
-If you want to put all temporary files into shadowsocks/temp folder instead of
-system temp folder, create a `shadowsocks_portable_mode.txt` into shadowsocks folder.
-
-#### Develop
-
-Visual Studio 2015 is required.
-
-#### License
-
-GPLv3
-
-
-[Appveyor]:       https://ci.appveyor.com/project/icylogic/shadowsocks-windows-l9mwe
-[Build Status]:   https://ci.appveyor.com/api/projects/status/ytllr9yjkbpc2tu2/branch/master
-[latest release]: https://github.com/shadowsocks/shadowsocks-csharp/releases
-[GFWList]:        https://github.com/gfwlist/gfwlist
-[Servers]:        https://github.com/shadowsocks/shadowsocks/wiki/Ports-and-Clients#linux--server-side
-[中文说明]:       https://github.com/shadowsocks/shadowsocks-windows/wiki/Shadowsocks-Windows-%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E
+```
+BouncyCastle.NetCore (MIT)       https://github.com/chrishaly/bc-csharp
+Caseless.Fody (MIT)              https://github.com/Fody/Caseless
+Costura.Fody (MIT)               https://github.com/Fody/Costura
+Fody (MIT)                       https://github.com/Fody/Fody
+GlobalHotKey (GPLv3)             https://github.com/kirmir/GlobalHotKey
+MdXaml (MIT)                     https://github.com/whistyun/MdXaml
+Newtonsoft.Json (MIT)            https://www.newtonsoft.com/json
+Privoxy (GPLv2)                  https://www.privoxy.org
+ReactiveUI.WPF (MIT)             https://github.com/reactiveui/ReactiveUI
+ReactiveUI.Events.WPF (MIT)      https://github.com/reactiveui/ReactiveUI
+ReactiveUI.Fody (MIT)            https://github.com/reactiveui/ReactiveUI
+ReactiveUI.Validation (MIT)      https://github.com/reactiveui/ReactiveUI.Validation
+WPFLocalizationExtension (MS-PL) https://github.com/XAMLMarkupExtensions/WPFLocalizationExtension/
+ZXing.Net (Apache 2.0)           https://github.com/micjahn/ZXing.Net
+```
